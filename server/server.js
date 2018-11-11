@@ -13,8 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json());
 
+//Configuración global de rutas
+app.use(require('./routes/index'));
 
-app.use(require('./routes/user'));
 
 mongoose.connect(process.env.urlDB, { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
     if (err) throw err;
