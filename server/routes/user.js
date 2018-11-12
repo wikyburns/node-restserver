@@ -31,8 +31,6 @@ app.get('/user', [verificarToken, verificaAdmin_Role], function(req, res) {
                     usuarios
                 });
             });
-
-
         });
 });
 
