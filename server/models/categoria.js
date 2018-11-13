@@ -15,7 +15,8 @@ let categoriaSchema = new Schema({
         default: true
     },
     usuario: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
     }
 });
 

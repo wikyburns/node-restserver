@@ -13,8 +13,10 @@ app.get('/categorias', (req, res) => {
     limite = Number(limite);
 
     Categoria.find({ estado: true })
+        .sort('nombre')
         .skip(desde)
         .limit(limite)
+        .populate('usuario', 'nombre email')
         .exec((err, categorias) => {
             if (err) {
                 return res.status(400).json({
