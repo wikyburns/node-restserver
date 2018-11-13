@@ -90,7 +90,7 @@ app.put('/categoria/:id', verificarToken, (req, res) => {
 
     let id = req.params.id;
 
-    Categoria.findByIdAndUpdate(id, body, { new: true }, (err, categoriaDB) => {
+    Categoria.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, categoriaDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
