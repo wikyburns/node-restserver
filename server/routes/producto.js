@@ -13,6 +13,7 @@ app.post('/producto', verificarToken, (req, res) => {
         nombre: body.nombre,
         precioUni: body.precioUni,
         descripcion: body.descripcion,
+        img: body.img,
         disponible: body.disponible,
         categoria: body.categoria,
         usuario: body.usuario

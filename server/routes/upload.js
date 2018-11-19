@@ -2,6 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
 const Usuario = require('../models/usuario');
+const Producto = require('../models/producto');
 const fs = require('fs');
 const path = require('path');
 
@@ -64,7 +65,10 @@ app.put('/upload/:tipo/:id', (req, res) => {
                 err
             });
         }
-        imagenUsuario(id, res, nombreArchivo);
+        if (tipo === 'productos')
+            imagenProducto(id, res, nombreArchivo);
+        else
+            imagenUsuario(id, res, nombreArchivo);
     });
 
 });
@@ -81,7 +85,6 @@ function imagenUsuario(id, res, nombreArchivo) {
         }
 
         if (!usuarioDB) {
-            borraArchivo(nombreArchivo, 'usuarios');
             if (err) {
                 return res.status(400).json({
                     ok: false,
@@ -115,8 +118,48 @@ function imagenUsuario(id, res, nombreArchivo) {
     });
 }
 
-function imagenProducto() {
+function imagenProducto(id, res, nombreArchivo) {
 
+    Producto.findById(id, (err, productoDB) => {
+        if (err) {
+            borraArchivo(nombreArchivo, 'productos');
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!productoDB) {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: "Producto no existe"
+                    }
+                });
+            }
+        }
+
+        borraArchivo(productoDB.img, 'productos');
+
+        productoDB.img = nombreArchivo;
+
+        productoDB.save((err, productoDB) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                producto: productoDB,
+                img: nombreArchivo
+            })
+        });
+
+    });
 }
 
 function borraArchivo(nombreImagen, tipo) {
