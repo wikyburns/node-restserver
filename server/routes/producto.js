@@ -44,6 +44,7 @@ app.get('/producto/:id', verificarToken, (req, res) => {
 
     Producto.findById(id)
         .populate('usuario', 'nombre email')
+        .populate('categoria')
         .exec((err, productoDB) => {
             if (err) {
                 return res.status(400).json({
@@ -73,7 +74,7 @@ app.get('/productos', verificarToken, (req, res) => {
         .skip(desde)
         .limit(limite)
         .populate('usuario', 'nombre email')
-        .populate('categoria', 'nombre')
+        .populate('categoria')
         .exec((err, prodctos) => {
             if (err) {
                 return res.status(400).json({
@@ -101,6 +102,7 @@ app.get('/producto/buscar/:termino', verificarToken, (req, res) => {
 
     Producto.find({ nombre: regex })
         .populate('usuario', 'nombre email')
+        .populate('categoria')
         .exec((err, productos) => {
             if (err) {
                 return res.status(500).json({
