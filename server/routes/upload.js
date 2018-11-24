@@ -55,7 +55,7 @@ app.put('/upload/:tipo/:id', (req, res) => {
 
 
     // Cambiar nombre al archivo
-    let nombreArchivo = `${ id }-${ new Date().getMilliseconds() }.${ extension }.`
+    let nombreArchivo = `${ id }-${ new Date().getMilliseconds() }.${ extension }`
 
     archivo.mv(`uploads/${tipo}/${ nombreArchivo }`, (err) => {
 
