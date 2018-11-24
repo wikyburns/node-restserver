@@ -75,62 +75,75 @@ app.put('/upload/:tipo/:id', (req, res) => {
 
 function imagenUsuario(id, res, nombreArchivo) {
 
-    Usuario.findById(id, (err, usuarioDB) => {
-        if (err) {
-            borraArchivo(nombreArchivo, 'usuarios');
-            return res.status(500).json({
-                ok: false,
-                err
-            });
-        }
 
-        if (!usuarioDB) {
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+
+        Usuario.findById(id, (err, usuarioDB) => {
             if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err: {
-                        message: "Usuario no existe"
-                    }
-                });
-            }
-        }
-
-        borraArchivo(usuarioDB.img, 'usuarios');
-
-        usuarioDB.img = nombreArchivo;
-
-        usuarioDB.save((err, usuarioDB) => {
-            if (err) {
+                borraArchivo(nombreArchivo, 'usuarios');
                 return res.status(500).json({
                     ok: false,
                     err
                 });
             }
 
-            res.json({
-                ok: true,
-                usuario: usuarioDB,
-                img: nombreArchivo
-            })
+            if (!usuarioDB) {
+                if (err) {
+                    borraArchivo(nombreArchivo, 'usuarios');
+                    return res.status(400).json({
+                        ok: false,
+                        err: {
+                            message: "Usuario no existe"
+                        }
+                    });
+                }
+            }
+
+            borraArchivo(usuarioDB.img, 'usuarios');
+
+            usuarioDB.img = nombreArchivo;
+
+            usuarioDB.save((err, usuarioDB) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    usuario: usuarioDB,
+                    img: nombreArchivo
+                })
+            });
         });
-
-
-    });
+    } else {
+        borraArchivo(nombreArchivo, 'productos');
+        return res.status(422).json({
+            ok: false,
+            err: {
+                message: "Invalid ID Format"
+            }
+        });
+    }
 }
 
 function imagenProducto(id, res, nombreArchivo) {
 
-    Producto.findById(id, (err, productoDB) => {
-        if (err) {
-            borraArchivo(nombreArchivo, 'productos');
-            return res.status(500).json({
-                ok: false,
-                err
-            });
-        }
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
 
-        if (!productoDB) {
+        Producto.findById(id, (err, productoDB) => {
             if (err) {
+                borraArchivo(nombreArchivo, 'productos');
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!productoDB) {
+                borraArchivo(nombreArchivo, 'productos');
                 return res.status(400).json({
                     ok: false,
                     err: {
@@ -138,28 +151,38 @@ function imagenProducto(id, res, nombreArchivo) {
                     }
                 });
             }
-        }
 
-        borraArchivo(productoDB.img, 'productos');
+            borraArchivo(productoDB.img, 'productos');
 
-        productoDB.img = nombreArchivo;
+            productoDB.img = nombreArchivo;
 
-        productoDB.save((err, productoDB) => {
-            if (err) {
-                return res.status(500).json({
-                    ok: false,
-                    err
-                });
-            }
+            productoDB.save((err, productoDB) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    });
+                }
 
-            res.json({
-                ok: true,
-                producto: productoDB,
-                img: nombreArchivo
-            })
+                res.json({
+                    ok: true,
+                    producto: productoDB,
+                    img: nombreArchivo
+                })
+            });
+
         });
+    } else {
+        borraArchivo(nombreArchivo, 'productos');
+        return res.status(422).json({
+            ok: false,
+            err: {
+                message: "Invalid ID Format"
+            }
+        });
+    }
 
-    });
+
 }
 
 function borraArchivo(nombreImagen, tipo) {
